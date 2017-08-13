@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registration Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div style="width: auto; height: 25px; position: relative; float: left;">
+    <form autocomplete="off" action="#" th:action="@{/registration}"
+    th:object="${user}" method="post" class="form-horizontal" role="">
+        <fieldset>
+            <legend>Registration Form</legend>
+            <table>
+                <tr>
+                    <td>User's Login:</td>
+                    <!--<label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"-->
+                           <!--class="validation-message"></label>-->
+                    <td><input type="text" th:field="*{login}" placeholder="Login"
+                                class="form-control" /></td>
+                </tr>
+                <tr>
+                    <td>User's Password:</td>
+                    <td><input type="s" th:field="*{password}"
+                               placeholder="Password" class="form-control" /> <label
+                            th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                            class="validation-message" /></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th><small>
+                        <input type="submit" name="addUser" value="Save"/>
+                    </small>
+                    </th>
+                    <th><small>
+                        <input type="submit" name="registration" value="Cancel"/>
+                    </small>
+                    </th>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

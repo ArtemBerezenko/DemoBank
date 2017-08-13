@@ -3,6 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <title>Sign In</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div th:if="${param.error}">
@@ -32,7 +34,9 @@
                 </small>
                 </th>
                 <th><small>
+                    <form th:action="@{/registration}" method="get">
                     <div><input type="submit" name="registration" value="Sign Up"/></div>
+                    </form>
                 </small>
                 </th>
             </tr>
