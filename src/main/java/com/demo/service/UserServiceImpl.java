@@ -13,8 +13,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public User findUser(String login, String password) {
-        return null;
+        return userRepository.findUsersByLoginAndPassword(login, password);
     }
 
     @Override
