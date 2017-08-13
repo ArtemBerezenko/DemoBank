@@ -1,5 +1,6 @@
 package com.demo.controller;
 
+import com.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,20 +16,17 @@ import com.demo.repository.UserRepository;
 public class MainController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping(path="/add")
     public @ResponseBody String addNewUser (@RequestParam String login,
                                             @RequestParam String password) {
-        User user = new User();
-        user.setLogin(login);
-        user.setPassword(password);
-        userRepository.save(user);
+        userService.saveUser(login, password);
         return "Saved";
     }
 
     @GetMapping(path="/all")
     public @ResponseBody Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+        return userService.findAllUsers();
     }
 }
