@@ -56,14 +56,14 @@ public class MainController {
         return modelAndView;
     }
 
-    @GetMapping(path="/admin/home")
+    @GetMapping(path="/user/home")
     public ModelAndView home(){
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
         modelAndView.addObject("username", "Welcome " + user.getLogin() + " (" + user.getEmail() + ")");
-        modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
-        modelAndView.setViewName("admin/home");
+        modelAndView.addObject("adminMessage","Welcome");
+        modelAndView.setViewName("user/home");
         return modelAndView;
     }
 
