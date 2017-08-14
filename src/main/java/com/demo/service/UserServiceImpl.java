@@ -15,11 +15,11 @@ import java.util.HashSet;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    @Qualifier("userRepository")
+
     @Autowired
     private UserRepository userRepository;
 
-    @Qualifier("roleRepository")
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User findUser(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 

@@ -39,7 +39,7 @@ public class MainController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView  createNewUser(@Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
-        User userExists = userService.findUser(user.getEmail());
+        User userExists = userService.findUserByEmail(user.getEmail());
         if (userExists != null) {
             bindingResult
                     .rejectValue("email", "error.user",
@@ -56,14 +56,14 @@ public class MainController {
         return modelAndView;
     }
 
-    @GetMapping(path="/admin/hello")
+    @GetMapping(path="/admin/home")
     public ModelAndView home(){
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUser(auth.getName());
-        modelAndView.addObject("username", "Welcome " + user.getLogin() + ")");
+        User user = userService.findUserByEmail(auth.getName());
+        modelAndView.addObject("username", "Welcome " + user.getLogin() + " (" + user.getEmail() + ")");
         modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
-        modelAndView.setViewName("admin/hello");
+        modelAndView.setViewName("admin/home");
         return modelAndView;
     }
 

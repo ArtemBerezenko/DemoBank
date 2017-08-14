@@ -1,4 +1,4 @@
-package com.demo.security;
+package com.demo.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated().and().csrf().disable()
                 .formLogin().loginPage("/login")
                 .failureUrl("/login?error=true")
-                .defaultSuccessUrl("/admin/hello")
+                .defaultSuccessUrl("/admin/home")
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .and().logout()
