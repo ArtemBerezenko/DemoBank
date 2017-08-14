@@ -29,6 +29,9 @@ public class User {
     @NotEmpty(message = "*Please provide your password")
     private String password;
 
+    @Column(name = "active")
+    private int active;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -63,6 +66,14 @@ public class User {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
     }
 
     public String getPassword() {
