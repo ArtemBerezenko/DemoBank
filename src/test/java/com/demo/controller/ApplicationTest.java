@@ -1,4 +1,4 @@
-package hello;
+package com.demo.controller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class ApplicationTest {
 
     @Test
     public void greetingWithUser() throws Exception {
-        mockMvc.perform(get("/greeting").param("name", "Greg"))
+        mockMvc.perform(get("/hello").param("name", "Greg"))
                 .andExpect(content().string(containsString("Hello, Greg!")));
     }
 

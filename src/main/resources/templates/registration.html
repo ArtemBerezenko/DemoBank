@@ -7,40 +7,46 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
+<form th:action="@{/}" method="get">
+    <button class="btn btn-md btn-warning btn-block" type="Submit">Go To Login Page</button>
+</form>
 <div style="width: auto; height: 25px; position: relative; float: left;">
-    <form autocomplete="off" action="#" th:action="@{/registration}"
-    th:object="${user}" method="post" class="form-horizontal" role="">
+    <form  autocomplete="off" action="#" th:action="@{/registration}"
+           th:object="${user}" method="post" class="form-horizontal" role="form">
         <fieldset>
             <legend>Registration Form</legend>
             <table>
                 <tr>
-                    <td>User's Login:</td>
-                    <!--<label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"-->
-                           <!--class="validation-message"></label>-->
+                    <label th:if="${#fields.hasErrors('login')}" th:errors="*{login}"
+                           class="validation-message"></label>
                     <td><input type="text" th:field="*{login}" placeholder="Login"
-                                class="form-control" /></td>
+                               class="form-control"/></td>
                 </tr>
                 <tr>
-                    <td>User's Password:</td>
-                    <td><input type="s" th:field="*{password}"
-                               placeholder="Password" class="form-control" /> <label
+                    <td><input type="text" th:field="*{email}" placeholder="Email"
+                           class="form-control" /> <label
+                        th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                        class="validation-message"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="password" th:field="*{password}"
+                               placeholder="Password" class="form-control" /><label
                             th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                            class="validation-message" /></td>
+                            class="validation-message"></label>
+                    </td>
                 </tr>
             </table>
             <table>
                 <tr>
                     <th><small>
-                        <input type="submit" name="addUser" value="Save"/>
-                    </small>
-                    </th>
-                    <th><small>
-                        <input type="submit" name="registration" value="Cancel"/>
+                        <button type="submit" class="btn btn-primary btn-block">Save</button>
                     </small>
                     </th>
                 </tr>
             </table>
         </fieldset>
+        <span th:utext="${successMessage}"></span>
     </form>
 </div>
 </body>
