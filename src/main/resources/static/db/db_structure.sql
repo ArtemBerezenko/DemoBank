@@ -27,7 +27,6 @@ CREATE TABLE `user` (
 -- Table structure for table `user_role`
 --
 DROP TABLE IF EXISTS `user_role`;
-
 CREATE TABLE `user_role` (
   `user_id` int(11) NOT NULL,
   `role_id` int(11) NOT NULL,
@@ -36,3 +35,16 @@ CREATE TABLE `user_role` (
   CONSTRAINT `FK859n2jvi8ivhui0rl0esws6o` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT `FKa68196081fvovjhkek5m97n3y` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `account`
+--
+DROP TABLE IF EXISTS `account`;
+CREATE TABLE `account` (
+  `account_id` int(11) NOT NULL AUTO_INCREMENT,
+  `cur_type` varchar(15) NOT NULL,
+  `balance` varchar(255) NOT NULL,
+  `user_acc_id` int(11) NOT NULL,
+  PRIMARY KEY (`account_id`),
+  CONSTRAINT `FKrtrb9o6tqweia3u4rugja2c40` FOREIGN KEY (user_acc_id) REFERENCES user(user_id)
+);

@@ -1,5 +1,6 @@
 package com.demo.controller;
 
+import com.demo.model.CurrencyType;
 import com.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -63,12 +64,10 @@ public class MainController {
         User user = userService.findUserByEmail(auth.getName());
         modelAndView.addObject("username", "Welcome " + user.getLogin() + " (" + user.getEmail() + ")");
         modelAndView.addObject("adminMessage","Welcome");
+        modelAndView.addObject("balanceUSD", userService.getBalanceByCurrencyType(user, CurrencyType.USD));
+        modelAndView.addObject("balanceEUR", userService.getBalanceByCurrencyType(user, CurrencyType.EUR));
+        modelAndView.addObject("balanceRUR", userService.getBalanceByCurrencyType(user, CurrencyType.RUR));
         modelAndView.setViewName("user/home");
         return modelAndView;
-    }
-
-    @GetMapping(path="/all")
-    public @ResponseBody Iterable<User> getAllUsers() {
-        return userService.findAllUsers();
     }
 }
