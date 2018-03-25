@@ -54,25 +54,21 @@ public class UserServiceImpl implements UserService {
     private Set<Account> getDefaultAccounts(User user) {
         Set<Account> accounts = new HashSet<>();
 
-        Account accountUSD = new Account();
-        accountUSD.setUser(user);
-        accountUSD.setType(CurrencyType.USD);
-        accountUSD.setBalance(balanceUSD);
-        accounts.add(accountUSD);
+        setDefaultAccountFromProperties(user, accounts, CurrencyType.USD, balanceUSD);
 
-        Account accountEUR = new Account();
-        accountEUR.setUser(user);
-        accountEUR.setType(CurrencyType.EUR);
-        accountEUR.setBalance(balanceEUR);
-        accounts.add(accountEUR);
+        setDefaultAccountFromProperties(user, accounts, CurrencyType.EUR, balanceEUR);
 
-        Account accountRUR = new Account();
-        accountRUR.setUser(user);
-        accountRUR.setType(CurrencyType.RUR);
-        accountRUR.setBalance(balanceRUR);
-        accounts.add(accountRUR);
+        setDefaultAccountFromProperties(user, accounts, CurrencyType.RUR, balanceRUR);
 
         return accounts;
+    }
+
+    private void setDefaultAccountFromProperties(User user, Set<Account> accounts, CurrencyType usd, double balance) {
+        Account account = new Account();
+        account.setUser(user);
+        account.setType(usd);
+        account.setBalance(balance);
+        accounts.add(account);
     }
 
     @Override
