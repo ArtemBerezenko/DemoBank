@@ -1,11 +1,18 @@
 $(document).ready(function() {
-    $.ajax({
-        type: "Post",
-        url: "http://localhost:8080/user/home"
-    }).then(function(data, status, jqxhr) {
-        $('.amountFrom').append(data.id)
-        $('.currency_from').append(data.id);
-        $('.currency_to').append(data.id);
-        console.log(jqxhr);
+    $('#amountFrom').change(function () {
+        var amountFrom = $(this).val();
+        console.log("amountFrom " + amountFrom);
+        $.ajax({
+            type: "GET",
+            url: "/getRate",
+            data: {
+                amountFrom: amountFrom, currencyFrom: $('#currency_from').val(),
+                currencyTo: $('#currency_to').val(), amountTo: $('#amountTo').val()
+            },
+            success: function (data) {
+                $('#amountTo').val(data);
+                console.log("amountTo: ", $('#amountTo').val());
+            }
+        });
     });
 });

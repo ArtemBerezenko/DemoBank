@@ -6,6 +6,7 @@ import com.demo.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -71,9 +72,7 @@ public class MainController {
 
     @GetMapping(path="/user/home")
     public ModelAndView home(){
-
         logger.info("INFO: home() is alive!");
-
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
@@ -85,41 +84,23 @@ public class MainController {
         modelAndView.addObject("currencyUSD", CurrencyType.USD);
         modelAndView.addObject("currencyRUR", CurrencyType.RUR);
         modelAndView.addObject("currencyEUR", CurrencyType.EUR);
-//        modelAndView.addObject("amountTo", currencyConverterService.getRate(currencyConverterService.findCurrency( CurrencyType.USD),
-//                currencyConverterService.findCurrency( CurrencyType.EUR)));
-
+        modelAndView.addObject("amountTo", currencyConverterService.getRate(currencyConverterService.findCurrency( CurrencyType.USD),
+                currencyConverterService.findCurrency( CurrencyType.EUR)));
         modelAndView.setViewName("user/home");
-
-        logger.info("INFO: modelAndView.getModel: " + modelAndView.getModel());
-
         return modelAndView;
     }
 
     @GetMapping(value = "/getRate")
-    public ModelAndView  getCurrencyForRate(@RequestParam("amountFrom") String amountFrom,
-                                            @RequestParam("currencyFrom") String currencyFrom,
-                                            @RequestParam("currencyTo") String currencyTo,
-                                            @RequestParam("amountTo") String amountTo) {
-
+    public ResponseEntity<?> getCurrencyForRate(@RequestParam(value = "amountFrom", required = false) String amountFrom,
+                                                @RequestParam(value ="currencyFrom", required = false) String currencyFrom,
+                                                @RequestParam(value ="currencyTo", required = false) String currencyTo) {
         logger.info("INFO: getCurrencyForRate() is alive");
         logger.info("INFO: amountFrom: " + amountFrom);
-
-        ModelAndView modelAndView = new ModelAndView();
-
         Float newRate = currencyConverterService.getRate(currencyConverterService.findCurrency(currencyFrom),
                                                             currencyConverterService.findCurrency(currencyTo));
         BigDecimal amount = new BigDecimal(amountFrom);
         BigDecimal newAmount = currencyConverterService.calculateCurrencyCurse(amount, newRate);
-
-        logger.info("newAmount: " + newAmount);
-
-        amountTo = newAmount.toString();
-        logger.info("INFO: amountTo: " + amountTo);
-
-//        modelAndView.addObject("amountTo", newAmount);
-//        modelAndView.addObject("amountTo", newAmount.toString());
-        modelAndView.addObject("amountTo", amountTo);
-        modelAndView.setViewName("user/home");
-        return modelAndView;
+        logger.info("INFO: newAmount: " + newAmount);
+        return ResponseEntity.ok(newAmount);
     }
 }
