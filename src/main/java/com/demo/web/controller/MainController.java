@@ -1,7 +1,6 @@
 package com.demo.web.controller;
 
 import com.demo.model.CurrencyType;
-import com.demo.model.Rate;
 import com.demo.service.CurrencyConverterService;
 import com.demo.service.UserService;
 import org.slf4j.Logger;
@@ -18,8 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class MainController {
