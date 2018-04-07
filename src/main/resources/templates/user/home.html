@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Bank</title>
 	<style type="text/css">
@@ -105,8 +105,28 @@
 			width: 310px;
 			text-align: right;}
 	</style>
+
 	<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script>
+      $(function clickCurrent() {
+            $('#amountFrom').change(function () {
+				console.log("Всем лежать лицом вниз, работает СПЕЦНАЗ");
+				var amountFrom = $(this).val();
+				console.log("amountFrom " + amountFrom);
+                $.ajax({
+                    type: "Get",
+                    url: "/getRate",
+					data: {amountFrom: amountFrom, currencyFrom: $('#currency_from').val(),
+						currencyTo: $('#currency_to').val(), amountTo: $('#amountTo').val()}
+                // }).then(function(data, status, jqxhr) {
+                //     $('#amountTo').append(data.id);
+                //     console.log(jqxhr);
+				});
+                console.log("currencyTo: " +$('#currency_to').val());
+                console.log("amountTo: " + $('#amountTo').val());
+            });
+        });
+	 </script>
 </head>
 <body>
 <h1 class="admin-message-text text-center" th:utext="${username}"></h1>
@@ -117,24 +137,45 @@
 			<th>ERO</th>
 			<th>RUB</th></tr>
 		<tr>
-			<td id="balansUSD"><p class="admin-message-text text-center" th:utext="${balanceUSD}"></p></td>
-			<td id="balansEUR"><p class="admin-message-text text-center" th:utext="${balanceEUR}"></p></td>
-			<td id="balansRUR"><p class="admin-message-text text-center" th:utext="${balanceRUR}"></p></td>
+			<td id="balanceUSD"><p class="admin-message-text text-center" th:utext="${balanceUSD}"></p></td>
+			<td id="balanceEUR"><p class="admin-message-text text-center" th:utext="${balanceEUR}"></p></td>
+			<td id="balanceRUR"><p class="admin-message-text text-center" th:utext="${balanceRUR}"></p></td>
 		</tr>
 		</tbody></table>
 	<p></p>
 	<table>
 		<tbody><tr class="head">
-			<th>USD/RUB</th>
-			<th>ERO/RUB</th>
-			<th>ERO/USD</th></tr>
 		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td valign="top" class="input-column" style="padding-bottom:20px;">
+				<!-- base amount -->
+				<input id="amountFrom" placeholder="1" class="from-input"  pattern="^[ 0-9]+$" th:type="Double">
+				<select name="currencyFrom" id="currency_from">
+					<option id="currencyFromUSD" th:value="${currencyUSD}">USD</option>
+					<option id="currencyFromRUR" th:value="${currencyRUR}">RUB</option>
+					<option id="currencyFromEUR" th:value="${currencyEUR}">ERO</option>
+				</select><p></p>
+			</td>
 		</tr>
-		</tbody></table>
+		<tr>
+			<td valign="top" class="input-column">
+				<!-- term amount -->
+				<input id="amountTo" class="to-input" th:utext="${amountTo}">
+				<select name="currencyTo" id="currency_to">
+					<option id="currencyToEUR" th:value="${currencyEUR}">ERO</option>
+					<option id="currencyToRUR" th:value="${currencyRUR}">RUB</option>
+					<option id="currencyToUSD" th:value="${currencyUSD}">USD</option>
+				</select><p></p>
+			</td>
+		</tr>
+		</tbody>
+		</form>
+	</table>
 	<p></p>
+	<form th:action="@{/logout}" method="post">
+	<div class="submit">
+		<input type="submit" value="Convert"/>
+	</div>
+	</form>
 	<table>
 		<tbody>
 		<caption>Operations history</caption>
@@ -163,19 +204,19 @@
 		<fieldset>
 			<legend>Buy foreign currency</legend>
 			<span class="converter_top">
-<span class="currency_heading converter_top">Currency I Have:</span>
+<span class="currency_heading converter_top">Currency I Want:</span>
 <select name="currency" id="old_currency">
-                        <option value="USD">USD</option>
-                        <option value="RUB">RUB</option>
-                        <option value="ERO">ERO</option>
+                        <option  id="sellEUR" th:utext="${currencyEUR}">EUR</option>
+                        <option id="sellUSD" th:utext="${currencyUSD}">USD</option>
+                        <option id="sellRUR" th:utext="${currencyRUR}">RUR</option>
                     </select><p></p>
 </span>
 			<span class="converter_bottom">
 <span class="currency_heading converter_bottom">Currency I Have:</span>
 <select name="currency" id="new_currency">
-                        <option value="USD">USD</option>
-                        <option value="RUB">RUB</option>
-                        <option value="ERO">ERO</option>
+                        <option id="buyUSD" th:utext="${currencyUSD}">USD</option>
+                        <option id="byRUR" th:utext="${currencyRUR}">RUR</option>
+                        <option id="bysEUR" th:utext="${currencyEUR}">ERO</option>
                     </select><p></p>
 </span>
 			<p>

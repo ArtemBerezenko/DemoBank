@@ -1,4 +1,4 @@
-package com.demo.service;
+package com.demo.service.Impl;
 
 import com.demo.model.Account;
 import com.demo.model.CurrencyType;
@@ -6,6 +6,7 @@ import com.demo.model.Role;
 import com.demo.model.User;
 import com.demo.repository.RoleRepository;
 import com.demo.repository.UserRepository;
+import com.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
