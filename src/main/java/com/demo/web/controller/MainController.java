@@ -1,7 +1,10 @@
 package com.demo.web.controller;
 
+import com.demo.exceptions.NoSuchCurrencyTypeAccount;
+import com.demo.exceptions.NotEnoughFundsException;
 import com.demo.model.CurrencyType;
 import com.demo.service.CurrencyConverterService;
+import com.demo.service.TransactionService;
 import com.demo.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MainController {
@@ -26,14 +33,15 @@ public class MainController {
 
     private UserService userService;
     private CurrencyConverterService currencyConverterService;
+    private TransactionService transactionService;
 
     @Autowired
-    public MainController(UserService userService, CurrencyConverterService currencyConverterService) {
+    public MainController(UserService userService, CurrencyConverterService currencyConverterService,
+                            TransactionService transactionService) {
         this.userService = userService;
         this.currencyConverterService = currencyConverterService;
-
+        this.transactionService = transactionService;
     }
-
 
     @GetMapping(path={"/", "/login"})
     public ModelAndView login() {
@@ -91,7 +99,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/getRate")
-    public ResponseEntity<?> getCurrencyForRate(@RequestParam(value = "amountFrom", required = false) String amountFrom,
+    public ResponseEntity<?> getCurrencyForRate(@RequestParam(value = "amountFrom", required = false) String  amountFrom,
                                                 @RequestParam(value ="currencyFrom", required = false) String currencyFrom,
                                                 @RequestParam(value ="currencyTo", required = false) String currencyTo) {
         logger.info("INFO: getCurrencyForRate() is alive");
@@ -102,5 +110,31 @@ public class MainController {
         BigDecimal newAmount = currencyConverterService.calculateCurrencyCurse(amount, newRate);
         logger.info("INFO: newAmount: " + newAmount);
         return ResponseEntity.ok(newAmount);
+    }
+
+    @PostMapping(value = "/buy")
+    public ResponseEntity<?> buy(@RequestParam(value = "amountFrom") String  amountFrom,
+                                 @RequestParam(value ="currencyFrom") String currencyFrom,
+                                 @RequestParam(value ="currencyTo") String currencyTo,
+                                 @RequestParam(value = "amountTo") String amountTo) throws NoSuchCurrencyTypeAccount, NotEnoughFundsException {
+        logger.info("INFO: buy() is alive");
+        logger.info("INFO: amountFrom: " + amountFrom);
+        logger.info("INFO: currencyFrom: " + currencyFrom);
+        logger.info("INFO: currencyTo: " + currencyTo);
+        logger.info("INFO: amountTo: " + amountTo);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByEmail(auth.getName());
+        logger.info("INFO: user: " + user.getLogin());
+        BigDecimal amount = new BigDecimal(amountFrom);
+        BigDecimal newAmount = new BigDecimal(amountTo);
+        transactionService.buy(user, currencyFrom, currencyTo, amount, newAmount);
+        BigDecimal balanceUSD = userService.getBalanceByCurrencyType(user, CurrencyType.USD);
+        BigDecimal balanceEUR = userService.getBalanceByCurrencyType(user, CurrencyType.EUR);
+        BigDecimal balanceRUR = userService.getBalanceByCurrencyType(user, CurrencyType.RUR);
+        Map<String, String> balance = new HashMap<>();
+        balance.put("balanceUSD", balanceUSD.toString());
+        balance.put("balanceEUR", balanceEUR.toString());
+        balance.put("balanceRUR", balanceRUR.toString());
+        return ResponseEntity.ok(balance);
     }
 }

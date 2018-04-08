@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service("userService")
@@ -31,11 +32,11 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Value("${balanceUSD}")
-    private double balanceUSD;
+    private BigDecimal balanceUSD;
     @Value("${balanceEUR}")
-    private double balanceEUR;
+    private BigDecimal balanceEUR;
     @Value("${balanceRUR}")
-    private double balanceRUR;
+    private BigDecimal balanceRUR;
 
     @Override
     public User findUserByEmail(String email) {
@@ -54,17 +55,13 @@ public class UserServiceImpl implements UserService {
 
     private Set<Account> getDefaultAccounts(User user) {
         Set<Account> accounts = new HashSet<>();
-
         setDefaultAccountFromProperties(user, accounts, CurrencyType.USD, balanceUSD);
-
         setDefaultAccountFromProperties(user, accounts, CurrencyType.EUR, balanceEUR);
-
         setDefaultAccountFromProperties(user, accounts, CurrencyType.RUR, balanceRUR);
-
         return accounts;
     }
 
-    private void setDefaultAccountFromProperties(User user, Set<Account> accounts, CurrencyType usd, double balance) {
+    private void setDefaultAccountFromProperties(User user, Set<Account> accounts, CurrencyType usd, BigDecimal balance) {
         Account account = new Account();
         account.setUser(user);
         account.setType(usd);
@@ -73,8 +70,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Double getBalanceByCurrencyType(User user, CurrencyType type) {
-        double balance = 0;
+    public BigDecimal getBalanceByCurrencyType(User user, CurrencyType type) {
+        BigDecimal balance = new BigDecimal(0);
         for (Account acc : user.getAccounts()) {
             if (type.equals(acc.getType())) {
                  balance = acc.getBalance();

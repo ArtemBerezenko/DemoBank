@@ -127,6 +127,36 @@
           });
       });
 	</script>
+	<script>
+        $(document).ready(function() {
+
+            $("#buy").click(callAjax);
+
+        // callAjax.bind($('#buy'));
+
+			function callAjax() {
+				 console.log("Ajax!");
+				 console.log(this);
+                $.ajax({
+                    type: "POST",
+                    url: "/buy",
+                    data: {
+                        amountFrom: $('#amountFrom').val(), currencyFrom: $('#currency_from').val(),
+                        currencyTo: $('#currency_to').val(), amountTo: $('#amountTo').val(),
+                        balanceUSD: $('#balanceUSD').val(), balanceEUR: $('#balanceEUR').val(),
+                        balanceRUR: $('#balanceRUR').val()
+                    },
+                    success: function (data) {
+                        console.log("data: ", data);
+                        console.log("data.balanceUSD: " + data.balanceUSD);
+						$('#balanceUSD').html(data.balanceUSD);
+						$('#balanceEUR').html(data.balanceEUR);
+                        $('#balanceRUR').html(data.balanceRUR);
+                    }
+                });
+            }
+        });
+	</script>
 </head>
 <body>
 <h1 class="admin-message-text text-center" th:utext="${username}"></h1>
@@ -182,9 +212,11 @@
 	</table>
 			</fieldset>
 		</br>
+
 		<div class="submit">
-			<input type="submit" value="Buy"/>
+			<input id="buy" type="submit" value="Buy"/>
 		</div>
+
 	</div>
 	<p></p>
 	<table>
