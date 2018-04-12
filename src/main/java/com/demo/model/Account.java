@@ -3,6 +3,7 @@ package com.demo.model;
 import com.demo.exceptions.NotEnoughFundsException;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "account")
@@ -17,7 +18,7 @@ public class Account {
     private CurrencyType type;
 
     @Column(name = "balance")
-    private Double balance;
+    private BigDecimal balance;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_acc_id")
@@ -39,11 +40,11 @@ public class Account {
         this.type = type;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
@@ -55,13 +56,13 @@ public class Account {
         this.user = user;
     }
 
-    public void deposit(long amount) {
-        balance += amount;
+    public void deposit(BigDecimal amount) {
+        this.balance = new BigDecimal(String.valueOf(balance.add(amount)));
     }
 
-    public void withdraw(long amount) throws NotEnoughFundsException {
-        if (balance >= amount) {
-            balance -= amount;
+    public void withdraw(BigDecimal amount) throws NotEnoughFundsException {
+        if (balance.compareTo(amount) >= 0) {
+            this.balance = new BigDecimal(String.valueOf(balance.subtract(amount)));
         } else {
             throw new NotEnoughFundsException(id, balance, amount,  "Sorry, not enough money");
         }

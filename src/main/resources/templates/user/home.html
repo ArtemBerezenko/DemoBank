@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Bank</title>
 	<style type="text/css">
@@ -65,7 +65,7 @@
 			font-style: italic;
 			color: #666666;}
 		input[type="number"] {
-			width: 120px;
+			width: 100px;
 			border: 1px solid #d6d6d6;
 			padding: 2px;
 			outline: none;}
@@ -105,8 +105,58 @@
 			width: 310px;
 			text-align: right;}
 	</style>
+
 	<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script>
+		$(document).ready(function() {
+          $('#amountFrom').change(function () {
+              var amountFrom = $(this).val();
+              console.log("amountFrom " + amountFrom);
+              $.ajax({
+                  type: "GET",
+                  url: "/getRate",
+                  data: {
+                      amountFrom: amountFrom, currencyFrom: $('#currency_from').val(),
+                      currencyTo: $('#currency_to').val(), amountTo: $('#amountTo').val()
+                  },
+                  success: function (data) {
+                       $('#amountTo').val(data);
+                      console.log("amountTo: ", $('#amountTo').val());
+                  }
+              });
+          });
+      });
+	</script>
+	<script>
+        $(document).ready(function() {
+
+            $("#buy").click(callAjax);
+
+        // callAjax.bind($('#buy'));
+
+			function callAjax() {
+				 console.log("Ajax!");
+				 console.log(this);
+                $.ajax({
+                    type: "POST",
+                    url: "/buy",
+                    data: {
+                        amountFrom: $('#amountFrom').val(), currencyFrom: $('#currency_from').val(),
+                        currencyTo: $('#currency_to').val(), amountTo: $('#amountTo').val(),
+                        balanceUSD: $('#balanceUSD').val(), balanceEUR: $('#balanceEUR').val(),
+                        balanceRUR: $('#balanceRUR').val()
+                    },
+                    success: function (data) {
+                        console.log("data: ", data);
+                        console.log("data.balanceUSD: " + data.balanceUSD);
+						$('#balanceUSD').html(data.balanceUSD);
+						$('#balanceEUR').html(data.balanceEUR);
+                        $('#balanceRUR').html(data.balanceRUR);
+                    }
+                });
+            }
+        });
+	</script>
 </head>
 <body>
 <h1 class="admin-message-text text-center" th:utext="${username}"></h1>
@@ -117,23 +167,57 @@
 			<th>ERO</th>
 			<th>RUB</th></tr>
 		<tr>
-			<td id="balansUSD"><p class="admin-message-text text-center" th:utext="${balanceUSD}"></p></td>
-			<td id="balansEUR"><p class="admin-message-text text-center" th:utext="${balanceEUR}"></p></td>
-			<td id="balansRUR"><p class="admin-message-text text-center" th:utext="${balanceRUR}"></p></td>
+			<td id="balanceUSD"><p class="admin-message-text text-center" th:utext="${balanceUSD}"></p></td>
+			<td id="balanceEUR"><p class="admin-message-text text-center" th:utext="${balanceEUR}"></p></td>
+			<td id="balanceRUR"><p class="admin-message-text text-center" th:utext="${balanceRUR}"></p></td>
 		</tr>
 		</tbody></table>
 	<p></p>
+	<div class="section">
+		<form th:action="@{/logout}" method="post">
+			<div class="submit">
+				<input type="submit" name="logout" value="Log Out"/>
+			</div>
+		</form>
+			<br>
+			<fieldset>
+				<legend>Buy foreign currency</legend>
 	<table>
 		<tbody><tr class="head">
-			<th>USD/RUB</th>
-			<th>ERO/RUB</th>
-			<th>ERO/USD</th></tr>
 		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td valign="top" class="input-column" style="padding-bottom:20px;">
+				<!-- base amount -->
+				<span class="currency_heading converter_bottom">Currency I Have:</span>
+				<input id="amountFrom" placeholder="1" class="from-input" type="number">
+				<select name="currencyFrom" id="currency_from">
+					<option id="currencyFromUSD" th:value="${currencyUSD}">USD</option>
+					<option id="currencyFromRUR" th:value="${currencyRUR}">RUR</option>
+					<option id="currencyFromEUR" th:value="${currencyEUR}">ERO</option>
+				</select><p></p>
+			</td>
 		</tr>
-		</tbody></table>
+		<tr>
+			<td valign="top" class="input-column">
+				<!-- term amount -->
+				<span class="currency_heading converter_top">Currency I Want:</span>
+				<input id="amountTo" class="to-input" th:value="${amountTo}" type="number">
+				<select name="currencyTo" id="currency_to">
+					<option id="currencyToEUR" th:value="${currencyEUR}">ERO</option>
+					<option id="currencyToRUR" th:value="${currencyRUR}">RUR</option>
+					<option id="currencyToUSD" th:value="${currencyUSD}">USD</option>
+				</select><p></p>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+			</fieldset>
+		</br>
+
+		<div class="submit">
+			<input id="buy" type="submit" value="Buy"/>
+		</div>
+
+	</div>
 	<p></p>
 	<table>
 		<tbody>
@@ -154,41 +238,5 @@
 		</tr>
 		</tbody></table>
 </div>
-<div class="section">
-	<form th:action="@{/logout}" method="post">
-		<div class="submit">
-			<input type="submit" name="logout" value="Log Out"/>
-		</div>
-		<br>
-		<fieldset>
-			<legend>Buy foreign currency</legend>
-			<span class="converter_top">
-<span class="currency_heading converter_top">Currency I Have:</span>
-<select name="currency" id="old_currency">
-                        <option value="USD">USD</option>
-                        <option value="RUB">RUB</option>
-                        <option value="ERO">ERO</option>
-                    </select><p></p>
-</span>
-			<span class="converter_bottom">
-<span class="currency_heading converter_bottom">Currency I Have:</span>
-<select name="currency" id="new_currency">
-                        <option value="USD">USD</option>
-                        <option value="RUB">RUB</option>
-                        <option value="ERO">ERO</option>
-                    </select><p></p>
-</span>
-			<p>
-				<label class="title" for="amount">Amount:</label>
-				<input type="number" name="amount" id="amount"/>
-			</p>
-		</fieldset>
-		</br>
-		<div class="submit">
-			<input type="submit" value="Buy"/>
-		</div>
-	</form>
-</div>
-
 </body>
 </html>
